@@ -1,0 +1,46 @@
+<!-- templates/my_books.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books</title>
+    <link rel="stylesheet" href="{% static 'vendors/styles/core.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/styles/style.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="pd-ltr-20">
+            <div class="card-box pd-20 height-100-p mb-30">
+                <h2>My Books</h2>
+                <div class="row mt-4">
+                    {% for file in files %}
+                    <div class="col-xl-4 mb-30">
+                        <div class="card-box height-100-p widget-style1">
+                            <div class="card card-box">
+                                <img class="card-img-top" src="{{ file.cover_page.url }}" alt="Cover Page">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ file.title }}</h5>
+                                    <p class="card-text">{{ file.description }}</p>
+                                    <p class="card-text"><small class="text-muted">Last updated {{ file.updated_at|timesince }} ago</small></p>
+                                    <a href="{{ file.file.url }}" class="btn btn-primary">View PDF</a>
+                                    <hr>
+                                    <form action="{% url 'delete_uploaded_file' file.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'upload' %}" class="btn btn-secondary">Back to Upload</a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'vendors/scripts/core.js' %}"></script>
+    <script src="{% static 'vendors/scripts/script.min.js' %}"></script>
+</body>
+</html>

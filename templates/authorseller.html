@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'vendors/images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'vendors/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'vendors/images/favicon-16x16.png' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/core.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/style.css' %}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        .login-header h1 {
+            text-align: center;
+        }
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        .table {
+            width: 100%;
+            margin-top: 2rem;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .table thead {
+            background-color: #f8f9fa;
+        }
+        .table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-header box-shadow">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <h1 class="login-header">User List</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="{% url 'authorseller' %}" method="POST" class="filter-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="visibility">Filter by Visibility:</label>
+                        <select class="form-control" name="visibility" id="visibility">
+                            <option value="default">Default</option>
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_type_filter">Filter by User Type:</label>
+                        <select name="user_type_filter" id="user_type_filter" class="form-control">
+                            <option value="all">All</option>
+                            <option value="author">Author</option>
+                            <option value="seller">Seller</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </form>
+                
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Address</th>
+                            <th>User Type</th>
+                            <th>Public Visibility</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.full_name }}</td>
+                            <td>{{ user.gender }}</td>
+                            <td>{{ user.city }}</td>
+                            <td>{{ user.state }}</td>
+                            <td>{{ user.address }}</td>
+                            <td>{{ user.user_type }}</td>
+                            <td>{{ user.public_visibility }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<!-- JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'vendors/scripts/core.js' %}"></script>
+<script src="{% static 'vendors/scripts/script.min.js' %}"></script>
+<script src="{% static 'vendors/scripts/process.js' %}"></script>
+<script src="{% static 'vendors/scripts/layout-settings.js' %}"></script>
+</body>
+</html>

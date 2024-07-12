@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Books</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'vendors/images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'vendors/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'vendors/images/favicon-16x16.png' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/core.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/style.css' %}">
+    <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+    }
+    .container {
+        margin-top: 2rem;
+    }
+    .login-header h1 {
+        text-align: center;
+    }
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+    }
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+    .table {
+        width: 100%;
+        margin-top: 2rem;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        padding: 0.75rem;
+        text-align: left;
+    }
+    .table thead {
+        background-color: #f8f9fa;
+    }
+    .table tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+    .card {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+    .card-img-top {
+        width: 100%;
+        border-top-left-radius: calc(0.25rem - 1px);
+        border-top-right-radius: calc(0.25rem - 1px);
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    .card-title {
+        margin-bottom: 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+    .card-text {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+</style>
+
+</head>
+<body>
+    <div class="login-header box-shadow">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <h1 class="login-header">Upload Books</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="{% url 'upload' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="visibility">Visibility:</label>
+                        <select class="form-control" id="visibility" name="visibility" required>
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cost">Cost:</label>
+                        <input type="number" class="form-control" id="cost" name="cost" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year_published">Year of Published:</label>
+                        <input type="number" class="form-control" id="year_published" name="year_published" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="file">File (PDF or JPEG):</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpeg" required>
+                    </div>
+                    <div                     class="form-group">
+                        <label for="cover_page">Cover Page (JPEG only):</label>
+                        <input type="file" class="form-control" id="cover_page" name="cover_page" accept=".jpeg" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+
+                <hr>
+                <h3>Uploaded Books</h3>
+                    {% if files %}
+                        <div class="row">
+                            {% for file in files %}
+                            <div class="col-xl-3 mb-30">
+                                <div class="card-box height-100-p widget-style1" id="uploaded-file-card{{ file.id }}">
+                                    <div id="uploaded-file-card" class="card card-box">
+                                        <img class="card-img-top" src="{{ file.cover_page.url }}" alt="Cover Page">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ file.title }}</h5>
+                                            <p class="card-text">{{ file.description }}</p>
+                                            <p class="card-text">{{ file.description }}</p>
+                                            <p class="card-text"><small class="text-muted">Last updated {{ file.updated_at|timesince }} ago</small></p>
+                                            <a href="{% url 'view_uploaded_file' file.id %}" class="btn btn-primary">View</a>
+                                            <form action="{% url 'delete_uploaded_file' file.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No files uploaded yet.</p>
+                    {% endif %}            
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        $(document).ready(function() {
+            $('.delete-btn').click(function() {
+                var fileId = $(this).data('file-id');
+                if (confirm('Are you sure you want to delete this file?')) {
+                    $.ajax({
+                        url: '/delete/' + fileId + '/',
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            $('#uploaded-file-card' + fileId).remove(); // Remove card from UI
+                            alert('File deleted successfully.');
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log(xhr.status + ': ' + xhr.responseText);
+                            alert('Error deleting file.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'vendors/scripts/core.js' %}"></script>
+    <script src="{% static 'vendors/scripts/script.min.js' %}"></script>
+    <script src="{% static 'vendors/scripts/process.js' %}"></script>
+    <script src="{% static 'vendors/scripts/layout-settings.js' %}"></script>
+</body>
+</html>
+

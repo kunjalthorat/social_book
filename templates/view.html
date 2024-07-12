@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+</head>
+<body>
+    <h1>{{ book.title }}</h1>
+    <img src="{{ book.cover_page.url }}" alt="Cover Page">
+    <p>{{ book.description }}</p>
+    <p>Visibility: {{ book.visibility }}</p>
+    <p>Cost: ${{ book.cost }}</p>
+    <p>Year Published: {{ book.year_published }}</p>
+    <p>Last updated: {{ book.updated_at }}</p>
+    <a href="{% url 'upload' %}">Back to Uploaded Books</a>
+</body>
+</html>
